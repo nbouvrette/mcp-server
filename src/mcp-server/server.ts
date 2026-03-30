@@ -13,6 +13,7 @@ import {
 } from "./resources.js";
 import { MCPScope } from "./scopes.js";
 import { createRegisterTool } from "./tools.js";
+import { tool$auditLogList } from "./tools/auditLogList.js";
 import { tool$aiConfigsCreate } from "./tools/aiConfigsCreate.js";
 import { tool$aiConfigsCreateVariation } from "./tools/aiConfigsCreateVariation.js";
 import { tool$aiConfigsDelete } from "./tools/aiConfigsDelete.js";
@@ -73,6 +74,7 @@ export function createMCPServer(deps: {
   const register = { tool, resource, resourceTemplate, prompt };
   void register; // suppress unused warnings
 
+  tool(tool$auditLogList);
   tool(tool$codeReferencesListRepositories);
   tool(tool$featureFlagsGetStatus);
   tool(tool$featureFlagsList);

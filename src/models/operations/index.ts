@@ -3,6 +3,7 @@
  */
 
 export * from "./deleteaiconfig.js";
+export * from "./getauditlogentries.js";
 export * from "./deleteaiconfigvariation.js";
 export * from "./deletefeatureflag.js";
 export * from "./getaiconfig.js";
