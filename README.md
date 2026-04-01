@@ -1,4 +1,80 @@
-# LaunchDarkly's Model Context Protocol (MCP) Server
+# LaunchDarkly's Model Context Protocol (MCP) Server (Fork)
+
+> **This is a temporary fork** of the official [LaunchDarkly MCP Server](https://github.com/launchdarkly/mcp-server) that adds **audit log support** (`get-audit-log-entries` tool). An [upstream PR](https://github.com/launchdarkly/mcp-server/pull/63) has been submitted. Once accepted, switch back to the official package.
+
+## Using this fork
+
+Since this fork is not published as an npm package, you need to clone it locally and point your MCP client at the local build.
+
+### 1. Clone and build
+
+```bash
+git clone https://github.com/nbouvrette/mcp-server.git
+cd mcp-server
+git checkout hack/audit-log-local
+npm install
+npm run build
+```
+
+### 2. Configure your MCP client
+
+#### Cursor
+
+Add this to your `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (per-project):
+
+```json
+{
+  "mcpServers": {
+    "LaunchDarkly": {
+      "command": "node",
+      "args": [
+        "/path/to/mcp-server/bin/mcp-server.js", "start",
+        "--api-key", "api-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      ]
+    }
+  }
+}
+```
+
+Replace `/path/to/mcp-server` with the absolute path to your clone, and use your own API key from the [LaunchDarkly Authorization page](https://app.launchdarkly.com/settings/authorization).
+
+#### Claude Desktop
+
+Add this to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "LaunchDarkly": {
+      "command": "node",
+      "args": [
+        "/path/to/mcp-server/bin/mcp-server.js", "start",
+        "--api-key", "api-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      ]
+    }
+  }
+}
+```
+
+### 3. Audit log tool usage
+
+The `get-audit-log-entries` tool supports these parameters:
+
+| Parameter | Description |
+|-----------|-------------|
+| `spec`    | Resource specifier to filter results. For flag history: `proj/<projectKey>:env/*:flag/<flagKey>` (the `env/` level is required — use `env/*` for all environments) |
+| `before`  | Unix epoch timestamp in ms — return entries older than this (use for pagination) |
+| `after`   | Unix epoch timestamp in ms — return entries newer than this |
+| `q`       | Full-text search (broad — prefer `spec` for flag history) |
+| `limit`   | Number of entries to return, 1–20 (default 10) |
+
+**Example:** To get the change history of a flag called `my-flag` in the `default` project:
+
+```
+spec = "proj/default:env/*:flag/my-flag"
+```
+
+---
 
 The official [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for [LaunchDarkly](https://launchdarkly.com/).
 
@@ -218,6 +294,10 @@ For supported JavaScript runtimes, please consult [RUNTIMES.md](RUNTIMES.md).
 
 <details open>
 <summary>Available methods</summary>
+
+### AuditLog
+
+* list - List audit log entries
 
 ### [AiConfigs](docs/sdks/aiconfigs/README.md)
 
